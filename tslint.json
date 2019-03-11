@@ -9,6 +9,9 @@
   },
   "rules": {
     "ordered-imports": [false],
-    "object-literal-sort-keys": [false]
+    "object-literal-sort-keys": [false],
+	"array-type": [false],
+	"no-console": false,
+	"no-var-requires": false
   }
 }
