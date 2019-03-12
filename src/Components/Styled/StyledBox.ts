@@ -12,8 +12,10 @@ export const StyledBox = styled.div`
 	box-shadow: 6px 6px 36px -4px rgba(0,0,0,0.55);
 	background-color: white;
 	text-align: center;
+	cursor: pointer;
 
 	&.active {
 		box-shadow: ${(props: IThemeProps) => props.theme.boxShadow};
+		background: #eff1ff;
 	}
 `;

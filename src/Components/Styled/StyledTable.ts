@@ -11,6 +11,10 @@ export const StyledTable = styled.table`
 
 	td, th {
 		padding: 15px 10px;
+		&.bigger {
+			padding: 0 10px;
+			font-size: 25px;
+		}
 	}
 
 	th {

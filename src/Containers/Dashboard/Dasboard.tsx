@@ -51,19 +51,25 @@ export class Dashboard extends React.PureComponent<IProps, IState> {
 	private renderDashboard(weatherData: IWeatherData[]) {
 
 		const temperature: number[] = [];
-		const windDirection: string[] = [];
-		const windSpeed: string[] = [];
-		const ripDirection: string[] = [];
-		const ripSpeed: string[] = [];
-		const waveHeight: string[] = [];
+		const windDirection: (string | React.ReactChild)[] = [];
+		const windSpeed: (string | React.ReactChild)[] = [];
+		const ripDirection: (string | React.ReactChild)[] = [];
+		const ripSpeed: (string | React.ReactChild)[] = [];
+		const waveHeight: (string | React.ReactChild)[] = [];
 		const labels: string[] = [];
 
 		this.state.detailedWeatherData.forEach((data: IWeatherData) => {
 			temperature.push(data.air_temperature_at_2m_above_ground_level ? Math.round(data.air_temperature_at_2m_above_ground_level) : null as any); // data will be skipped when 'null'
-			windDirection.push(data.wind_from_direction_at_10m_above_ground_level ? Math.round(data.wind_from_direction_at_10m_above_ground_level).toString() : '--');
+			windDirection.push(data.wind_from_direction_at_10m_above_ground_level ?
+				<i className={`wi wi-wind towards-${Math.round(data.wind_from_direction_at_10m_above_ground_level).toString()}-deg`}/> :
+				'--'
+			);
 			windSpeed.push(data.wind_speed_at_10m_above_ground_level ? Math.round(data.wind_speed_at_10m_above_ground_level).toString() : '--');
-			ripDirection.push(data.sea_surface_wave_from_direction_at_variance_spectral_density_maximum ? Math.round(data.sea_surface_wave_from_direction_at_variance_spectral_density_maximum).toString() : '--');
-			ripSpeed.push(data.surface_sea_water_speed ? Math.round(data.surface_sea_water_speed).toString() : '--');
+			ripDirection.push(data.sea_surface_wave_from_direction_at_variance_spectral_density_maximum ?
+				<i className={`wi wi-wind towards-${Math.round(data.sea_surface_wave_from_direction_at_variance_spectral_density_maximum).toString()}-deg`}/> :
+				'--'
+			);
+			ripSpeed.push(data.surface_sea_water_speed ? data.surface_sea_water_speed : '--');
 			waveHeight.push(`${data.sea_surface_wave_significant_height ? Math.round(data.sea_surface_wave_significant_height) : '--'}/${data.sea_surface_wave_maximum_height ? Math.round(data.sea_surface_wave_maximum_height) : '--'}`);
 			labels.push(formatHoursMinutes(data.datetime));
 		});
