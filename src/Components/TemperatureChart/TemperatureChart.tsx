@@ -73,6 +73,9 @@ export class TemperatureChart extends React.PureComponent<IProps, IState> {
 							ticks: {
 								padding: 40,
 								maxTicksLimit: 5,
+								callback: (value: number) => {
+									return value.toFixed(1) + '°C';
+								}
 							},
 						}]
 					},
