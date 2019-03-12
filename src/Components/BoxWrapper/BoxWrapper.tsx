@@ -4,6 +4,7 @@ import { StyledBoxWrapper } from '../Styled/StyledBoxWrapper';
 import { DayPreviewBox } from '../DayPreviewBox/DayPreviewBox';
 import * as dateFns from 'date-fns';
 import { calculateAverageRecords } from 'src/Model/Weather/calculateAverageRecords';
+import { getNameDay } from 'src/Model/Date/getNameDay';
 
 interface IProps {
 	startDay: Date;
@@ -12,7 +13,13 @@ interface IProps {
 	seeDetail(weatherData: IWeatherData[]): void;
 }
 
-export class BoxWrapper extends React.PureComponent<IProps> {
+interface IState {
+	activeKey?: string; 
+}
+
+export class BoxWrapper extends React.PureComponent<IProps, IState> {
+
+	public state: IState = {};
 
 	public componentDidMount() {
 		if (this.props.predictions < 0) {
@@ -29,19 +36,36 @@ export class BoxWrapper extends React.PureComponent<IProps> {
 					predictionsArray.map((val: any, day: number) => {
 						const previewBoxStartDate = dateFns.addHours(startOfADay, 24 * day);
 						const previewBoxEndDate = dateFns.endOfDay(previewBoxStartDate);
-						console.log(previewBoxStartDate, previewBoxEndDate);
 						const averageRecords = calculateAverageRecords(previewBoxStartDate, previewBoxEndDate, this.props.weatherData);
+						const dateName = ((n: number) => {
+							switch (n) {
+								case 0:
+									return 'Today';
+								case 1:
+									return 'Tomorrow';
+								default:
+									return getNameDay(previewBoxStartDate);
+							}
+						})(day);
 						return <DayPreviewBox
 							key={previewBoxStartDate.toISOString()}
+							active={previewBoxStartDate.toISOString() === this.state.activeKey}
 							temperature={averageRecords.air_temperature_at_2m_above_ground_level}
 							wave={averageRecords.sea_surface_wave_significant_height}
 							windSpeed={averageRecords.wind_speed_at_10m_above_ground_level}
-							day={previewBoxStartDate}
-							onClick={() => this.props.seeDetail(averageRecords.weatherData)}
+							dayName={dateName}
+							onClick={() => this.activateDayPreviewBox(averageRecords.weatherData, previewBoxStartDate.toISOString())}
 						/>;
 					})
 				}
 			</StyledBoxWrapper>
 		)
+	}
+
+	private activateDayPreviewBox = (weatherData: IWeatherData[], activeKey: string) => {
+		this.setState({
+			activeKey,
+		});
+		this.props.seeDetail(weatherData);
 	}
 }

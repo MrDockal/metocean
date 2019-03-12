@@ -33,9 +33,9 @@ export const calculateAverageRecords = (sinceDate: Date, toDate: Date, weatherDa
 	return {
 		sinceDate,
 		toDate,
-		air_temperature_at_2m_above_ground_level: airTemperatureSum / airTemperatureLength,
-		sea_surface_wave_significant_height: waveSum / waveLength,
-		wind_speed_at_10m_above_ground_level: speedSum / speedLenght,
+		air_temperature_at_2m_above_ground_level: Math.round(airTemperatureSum / airTemperatureLength),
+		sea_surface_wave_significant_height: Math.round(waveSum / waveLength),
+		wind_speed_at_10m_above_ground_level: Math.round(speedSum / speedLenght),
 		weatherData: filteredWeatherData,
 	};
 }

@@ -6,6 +6,9 @@ import { BoxWrapper } from 'src/Components/BoxWrapper/BoxWrapper';
 import { TemperatureChart } from 'src/Components/TemperatureChart/TemperatureChart';
 import { StyledDashboard } from 'src/Components/Styled/StyledDashboard';
 import { DashboardTable, IData } from 'src/Components/DashboardTable/DashboardTable';
+import { StyledSection } from 'src/Components/Styled/StyledSection';
+import { StyledSeparator } from 'src/Components/Styled/StyledSeparator';
+import { formatHoursMinutes } from 'src/Model/Date/formatHoursMinutes';
 
 interface IProps {
 	csvData: string;
@@ -56,16 +59,19 @@ export class Dashboard extends React.PureComponent<IProps, IState> {
 		const labels: string[] = [];
 
 		this.state.detailedWeatherData.forEach((data: IWeatherData) => {
-			temperature.push(data.air_temperature_at_2m_above_ground_level as number); // data will be skipped when 'null'
-			windDirection.push(data.wind_from_direction_at_10m_above_ground_level ? data.wind_from_direction_at_10m_above_ground_level.toString() : '--');
-			windSpeed.push(data.wind_speed_at_10m_above_ground_level ? data.wind_speed_at_10m_above_ground_level.toString() : '--');
-			ripDirection.push(data.sea_surface_wave_from_direction_at_variance_spectral_density_maximum ? data.sea_surface_wave_from_direction_at_variance_spectral_density_maximum.toString() : '--');
-			ripSpeed.push(data.surface_sea_water_speed ? data.surface_sea_water_speed.toString() : '--');
-			waveHeight.push(`${data.sea_surface_wave_significant_height ? data.sea_surface_wave_significant_height : '--'}/${data.sea_surface_wave_maximum_height ? data.sea_surface_wave_maximum_height : '--'}`);
-			labels.push(new Date(data.datetime).toLocaleDateString());
+			temperature.push(data.air_temperature_at_2m_above_ground_level ? Math.round(data.air_temperature_at_2m_above_ground_level) : null as any); // data will be skipped when 'null'
+			windDirection.push(data.wind_from_direction_at_10m_above_ground_level ? Math.round(data.wind_from_direction_at_10m_above_ground_level).toString() : '--');
+			windSpeed.push(data.wind_speed_at_10m_above_ground_level ? Math.round(data.wind_speed_at_10m_above_ground_level).toString() : '--');
+			ripDirection.push(data.sea_surface_wave_from_direction_at_variance_spectral_density_maximum ? Math.round(data.sea_surface_wave_from_direction_at_variance_spectral_density_maximum).toString() : '--');
+			ripSpeed.push(data.surface_sea_water_speed ? Math.round(data.surface_sea_water_speed).toString() : '--');
+			waveHeight.push(`${data.sea_surface_wave_significant_height ? Math.round(data.sea_surface_wave_significant_height) : '--'}/${data.sea_surface_wave_maximum_height ? Math.round(data.sea_surface_wave_maximum_height) : '--'}`);
+			labels.push(formatHoursMinutes(data.datetime));
 		});
 
 		const atmospehereData: IData[] = [{
+			rowName: 'Time',
+			columns: labels,
+		}, {
 			rowName: 'Wind direction',
 			columns: windDirection,
 		}, {
@@ -80,19 +86,28 @@ export class Dashboard extends React.PureComponent<IProps, IState> {
 			rowName: 'Rip direction',
 			columns: ripDirection
 		}, {
-			rowName: 'Wave height',
+			rowName: 'Wave height, avg/max',
 			columns: waveHeight,
 		}];
 
 		return (
 			<StyledDashboard>
-				<div>
+				<StyledSection>
 					Today: {this.state.selectedDay.toLocaleDateString()}
-				</div>
-				<BoxWrapper predictions={5} startDay={this.state.selectedDay} weatherData={weatherData} seeDetail={this.setDetailedWeatherData} />
-				<DashboardTable headerIcon={'Wind'} data={atmospehereData}/>
-				<DashboardTable headerIcon={'Sea'} data={seaData}/>
-				<TemperatureChart data={temperature} labels={labels} />
+				</StyledSection>
+				<StyledSection>
+					<BoxWrapper predictions={5} startDay={this.state.selectedDay} weatherData={weatherData} seeDetail={this.setDetailedWeatherData} />
+				</StyledSection>
+				{
+					this.state.detailedWeatherData.length > 0 &&
+					<div>
+						<DashboardTable headerIcon={'Wind'} data={atmospehereData} />
+						<StyledSeparator />
+						<DashboardTable headerIcon={'Sea'} data={seaData} />
+						<StyledSeparator />
+						<TemperatureChart data={temperature} labels={labels} />
+					</div>
+				}
 			</StyledDashboard>
 		)
 	}

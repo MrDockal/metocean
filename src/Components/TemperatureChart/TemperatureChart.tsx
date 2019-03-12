@@ -1,27 +1,36 @@
 import * as React from 'react';
 import * as Chart from 'chart.js';
+import { StyledSection } from '../Styled/StyledSectionContainer';
 
 interface IProps {
 	data: number[];
 	labels: string[];
 }
 
-export class TemperatureChart extends React.PureComponent<IProps> {
+interface IState {
+	chart?: Chart;
+}
+
+export class TemperatureChart extends React.PureComponent<IProps, IState> {
+	public state: IState = {};
 	private canvasRef = React.createRef<HTMLCanvasElement>();
 
 	public componentDidMount() {
 		this.renderData();
 	}
 
-	public componentDidUpdate() {
-		this.renderData();
+	public componentDidUpdate(prevProps: IProps) {
+		if (prevProps !== this.props) {
+			this.state.chart && this.state.chart.destroy();
+			this.renderData();
+		}
 	}
 
 	public render() {
 		return (
-			<div style={{ height: 300 }}>
+			<StyledSection style={{ height: 300 }}>
 				<canvas ref={this.canvasRef} />
-			</div>
+			</StyledSection>
 		)
 	}
 
@@ -35,7 +44,7 @@ export class TemperatureChart extends React.PureComponent<IProps> {
 		}
 		Chart.defaults.global.defaultFontFamily = 'Roboto';
 		Chart.defaults.global.defaultFontSize = 16;
-		new Chart(
+		const chart = new Chart(
 			context2d,
 			{
 				type: 'line',
@@ -74,5 +83,8 @@ export class TemperatureChart extends React.PureComponent<IProps> {
 				},
 			}
 		);
+		this.setState({
+			chart,
+		});
 	}
 }
