@@ -1,22 +1,31 @@
 import * as React from 'react';
-import './App.css';
+import { ThemeProvider } from 'styled-components';
+import { theme } from './Model/theme';
+import { Dashboard } from './Containers/Dashboard/Dasboard';
+import { createGlobalStyle } from 'styled-components'
 
-import logo from './logo.svg';
+const csvData = require('./assets/data.csv');
+const jsonData = require('./assets/data.json');
+
+
+const GlobalStyle = createGlobalStyle<{fontFamily: string, backgroundColor: string}>`
+  html, body {
+	font-family: ${(props: {fontFamily: string}) => props.fontFamily};
+	background-color: ${(props: {backgroundColor: string}) => props.backgroundColor};
+  }
+`
 
 class App extends React.Component {
-  public render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
+	public render() {
+		return (
+			<ThemeProvider theme={theme}>
+				<React.Fragment>
+					<GlobalStyle fontFamily={theme.fontFamily} backgroundColor={theme.backgroundColor}/>
+					<Dashboard csvData={csvData} jsonData={jsonData}/>
+				</React.Fragment>
+			</ThemeProvider>
+		);
+	}
 }
 
 export default App;
