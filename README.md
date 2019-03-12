@@ -4,4 +4,4 @@
 3) For development run `npm run start`
 
 ## Sample app
-The application run at GitHub pages. See it online at [https://mrdockal.github.io/metocean/](https://mrdockal.github.io/metocean/)
+The application runs at GitHub pages. See it online at [https://mrdockal.github.io/metocean/](https://mrdockal.github.io/metocean/)
